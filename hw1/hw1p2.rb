@@ -20,21 +20,21 @@ print (rps_game_winner [["Armando", "S"], ["Dave", "R"]]), "\n"
 print (rps_game_winner [["Armando", "S"], ["Dave", "S"]]), "\n"
 #print (rps_game_winner [["Armando", "S"], ["Dave", "K"]]), "\n"
 
-class WrongNumberOfGamesError < StandardError ; end
-
-def rps_tournament_winner(tournament)
-  raise WrongNumberOfGamesError unless tournament.length == 2
-  # if game
-  if tournament.length == 2 and
-    tournament[0].kind_of? Array and tournament[0][0].kind_of? String and
-    tournament[1].kind_of? Array and tournament[1][0].kind_of? String
-    rps_game_winner tournament
-  else
-    rps_tournament_winner [rps_tournament_winner(tournament[0]), rps_tournament_winner(tournament[1])]
-  end
+def player?(array)
+    array.kind_of? Array and array.length == 2 and array.first.kind_of? String
 end
 
-# [[[["Armando", "P"],["Dave", "S"]],[["Richard", "R"],["Michael", "S"]]],[[["Allen", "S"],["Omer", "P"]],[["David E.", "R"],["Richard X.", "P"]]]]
+def rps_tournament_winner(tournament)
+    while tournament.length == 2 do
+        game2 = tournament.pop
+        game1 = tournament.pop
+
+        tournament.push(rps_game_winner [player?(game1) ? game1 : rps_tournament_winner(game1),
+                                         player?(game2) ? game2 : rps_tournament_winner(game2)])
+    end
+    tournament.pop
+end
+
 print (rps_tournament_winner [["Armando", "P"], ["Dave", "S"]]), "\n"
 print (rps_tournament_winner [
                                [
