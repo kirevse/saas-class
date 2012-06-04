@@ -25,14 +25,15 @@ def player?(array)
 end
 
 def rps_tournament_winner(tournament)
-    while tournament.length == 2 do
-        game2 = tournament.pop
-        game1 = tournament.pop
+    temp_tournament = tournament.clone
+    while temp_tournament.length == 2 do
+        game2 = temp_tournament.pop
+        game1 = temp_tournament.pop
 
-        tournament.push(rps_game_winner [player?(game1) ? game1 : rps_tournament_winner(game1),
-                                         player?(game2) ? game2 : rps_tournament_winner(game2)])
+        temp_tournament.push(rps_game_winner [player?(game1) ? game1 : rps_tournament_winner(game1),
+                                              player?(game2) ? game2 : rps_tournament_winner(game2)])
     end
-    tournament.pop
+    temp_tournament.pop
 end
 
 print (rps_tournament_winner [["Armando", "P"], ["Dave", "S"]]), "\n"
