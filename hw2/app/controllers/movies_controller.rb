@@ -7,7 +7,40 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @all_ratings = Movie.all_ratings
+    current_params = params
+    @ratings = current_params[:ratings]
+    session_ratings = session[:ratings]
+    to_redirect = false
+    if @ratings.nil? and not session_ratings.nil?
+      to_redirect = true
+      current_params = current_params.merge(:ratings => session_ratings)
+    end
+    @sort_by = params[:sort_by]
+    session_sort_by = session[:sort_by]
+    if @sort_by.nil? and not session_sort_by.nil?
+      to_redirect = true
+      current_params = current_params.merge(:sort_by => session_sort_by)
+    end
+    if to_redirect
+      flash.keep
+      redirect_to url_for(current_params)
+    end
+    conditions = Hash.new
+    if not @ratings.nil?
+      session[:ratings] = @ratings
+      conditions[:rating] = @ratings.keys
+    end
+    if not @ratings.nil?
+      session[:ratings] = @ratings
+      conditions[:rating] = @ratings.keys
+    end
+    sort_by = nil
+    if [:title.to_s, :release_date.to_s].include? @sort_by
+      session[:sort_by] = @sort_by
+      sort_by = @sort_by
+    end
+    @movies = Movie.find(:all, :conditions => conditions, :order => sort_by)
   end
 
   def new
